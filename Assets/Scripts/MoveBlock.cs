@@ -50,7 +50,7 @@ public class MoveBlock : MoveHeinz
                 poisoned = false;
             }
         }
-		dead = health<0;
+		dead = health<0||transform.position.y<-10;
         if((dead)){
             kill();
         }

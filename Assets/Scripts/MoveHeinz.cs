@@ -8,8 +8,8 @@ public class MoveHeinz : MonoBehaviour {
 	//testcomment
 	public CharInput charInput;
 
-	protected float walkSpeed = 15;
-	protected float runSpeed = 30;
+	public float walkSpeed = 15;
+	public float runSpeed = 30;
 	protected int gravity = 20;
 	public float flySpeed = 100;
 	//some move stuff
@@ -89,7 +89,7 @@ public class MoveHeinz : MonoBehaviour {
 		forearm = arm.Find("Bone.008");
 		hand = forearm.Find("Bone.009");
 		cameraT = charInput.cameraT;
-		spells = new String[]{"FreezeSpell","DeathSpell","FireBoltCharge","BaseBoltSpell","BaseBoltHeavySpell"};
+		spells = new String[]{"BaseBoltSpell","BaseBoltHeavySpell","FireBoltCharge","DeathSpell","FreezeSpell"};
 		spell = (GameObject)Resources.Load("Prefabs/" + spells[spellIndex]);
 		health = totalHealth;
 		
@@ -97,6 +97,7 @@ public class MoveHeinz : MonoBehaviour {
 	}
 
 	public virtual void LateUpdate () {
+		Physics.Raycast(cameraT.position, cameraT.forward, out hit, Mathf.Infinity, ~(1<<(gameObject.layer)));
 		HandleDamage();
 		attackingPrev = isAttacking;
 		charInput.CollectInputs();
@@ -115,7 +116,6 @@ public class MoveHeinz : MonoBehaviour {
 
 		
 		launchAttack();
-		Physics.Raycast(cameraT.position, cameraT.forward, out hit, Mathf.Infinity, ~(1<<10));
 		//print(knockback);
 		
 		Debug.DrawRay(transform.position,forceVelVec*100,Color.red);

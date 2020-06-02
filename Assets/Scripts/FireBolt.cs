@@ -28,6 +28,7 @@ public class FireBolt : Spell
     }
 
     public override void UseEffect(){
+        print(origin);
         transform.Translate(velocity*Time.deltaTime*transform.up,Space.World);  
         timer -= Time.deltaTime;
         if(timer<0){

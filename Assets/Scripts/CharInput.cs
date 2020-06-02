@@ -6,6 +6,7 @@ public class CharInput : MonoBehaviour
 {
     // Start is called before the first frame update
     public Vector2 inputDir;
+    public MoveHeinz controllerScript;
     public bool leftMouseDown = false;
     public bool leftMouseDownPrev = false;
     public bool walking;

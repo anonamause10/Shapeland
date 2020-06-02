@@ -8,9 +8,26 @@ public class MoveEnemy : MoveHeinz
     public Slider healthBarSlider;
     protected float healthBarDamp = 0;
 
+    public override void Start(){
+        base.Start();
+        charInput = (EnemyInput)charInput;
+        charInput.controllerScript = this;
+    }
+
     public override void HandleDamage(){
         healthBarSlider.value = Mathf.SmoothDamp(healthBarSlider.value, health/totalHealth, ref healthBarDamp, 0.1f);
-        base.HandleDamage();
+        if(poisoned){
+            if(dpsTime>0){
+                health-=dps;
+                dpsTime-=Time.deltaTime;
+            }else{
+                poisoned = false;
+            }
+        }
+		dead = health<0||transform.position.y<-10;
+        if((dead)){
+            kill();
+        }
     }
 
     public override void kill(){

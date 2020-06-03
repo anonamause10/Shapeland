@@ -73,6 +73,9 @@ public class MoveHeinz : MonoBehaviour {
 	public GameObject currSpell;
 	protected int spellIndex;
 	protected String[] spells;
+	protected bool shielding = false;
+	public GameObject currShield;
+	protected GameObject shield; 
 
 	//controller stuff
 	protected CharacterController controller;
@@ -91,6 +94,7 @@ public class MoveHeinz : MonoBehaviour {
 		cameraT = charInput.cameraT;
 		spells = new String[]{"BaseBoltSpell","BaseBoltHeavySpell","FireBoltCharge","DeathSpell","FreezeSpell"};
 		spell = (GameObject)Resources.Load("Prefabs/" + spells[spellIndex]);
+		shield = (GameObject)Resources.Load("Prefabs/DefaultShield");
 		health = totalHealth;
 		
 		//animator.speed = 0.5f;
@@ -231,6 +235,19 @@ public class MoveHeinz : MonoBehaviour {
 		if(charInput.spawnBoi){
 			Instantiate((GameObject)Resources.Load("Prefabs/Enemies/Enemy"),(hit.distance!=0?hit.point:(cameraT.position+cameraT.forward*100)),Quaternion.identity);
 		}
+		if(charInput.shield){
+			shielding = true;
+			if(currShield==null){
+				currShield = Instantiate(shield,wandTip.transform.position,Quaternion.identity);
+				currShield.GetComponent<Shield>().SetPlayer(this);
+			}
+			animator.SetInteger("attack",2);
+		}else{
+			shielding = false;
+			if(currShield!=null){
+				currShield.GetComponent<Shield>().kill();
+			}
+		}
 		//attacking
 		bool valid = attackValid();
 		if(charInput.leftMouseDown&&valid){
@@ -258,7 +275,9 @@ public class MoveHeinz : MonoBehaviour {
 		if((isAttacking||attackFrameCounter>0||attackMode)&&controller.isGrounded){
 			arm.RotateAround(arm.position,transform.right,!flying?(cameraT.eulerAngles.x+(attackMode?-20*(currentSpeed/runSpeed):0)):0);
 		}
-		rotateArm(cameraT.forward, transform.forward);
+		if(attackMode||isAttacking){
+			rotateArm(cameraT.forward, transform.forward);
+		}
 		attackValidPrev = valid;
 	}
 
@@ -359,7 +378,7 @@ public class MoveHeinz : MonoBehaviour {
 		Vector3 camforward = Vector3.ProjectOnPlane(cameraT.forward, Vector3.up);
 		float degree = Vector3.SignedAngle(camforward, forward, Vector3.up);
 		degree = degree<0?360+degree:degree;
-		return !(degree>135&&degree<225)&&spell.GetComponent<Spell>().EffectValid(this)&&knockback==0;
+		return !(degree>135&&degree<225)&&spell.GetComponent<Spell>().EffectValid(this)&&knockback==0&&!shielding;
 	}
 
 	public virtual bool MouseDown(){

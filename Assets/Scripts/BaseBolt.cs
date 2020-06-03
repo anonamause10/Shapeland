@@ -7,7 +7,9 @@ public class BaseBolt : Spell
     public float velocity=50;
     public float timer = 5f;
     private GameObject explosion;
+    private GameObject release;
     public bool attackingDone;
+    public bool isReflected = false;
 
     public override void StartStuff(){
         //Physics.IgnoreCollision(player.gameObject.GetComponent<Collider>(), GetComponent<Collider>(), bool ignore = true);
@@ -22,7 +24,8 @@ public class BaseBolt : Spell
         damage = 2f;
 
         explosion = (GameObject)Resources.Load("Prefabs/BaseBoltRelease");
-        Instantiate(explosion, player.wandTip.transform.position, Quaternion.LookRotation(transform.forward));
+        release = (GameObject)Resources.Load("Prefabs/BaseBoltRelease");
+        Instantiate(explosion, transform.position, Quaternion.LookRotation(transform.forward));
     }
 
     public override void LateUpdate()
@@ -52,7 +55,15 @@ public class BaseBolt : Spell
     }
 
     void OnTriggerEnter(Collider other){
-        Instantiate(explosion, other.gameObject.GetComponent<Collider>().ClosestPointOnBounds(transform.position), Quaternion.LookRotation(Vector3.up)); 
+        if(other.gameObject.tag == "Shield"){
+            Shield shield = other.gameObject.GetComponent<Shield>();
+            Vector3 shieldEffect = shield.DoParryEffect(this);
+            if(shieldEffect!=Vector3.zero){
+                transform.forward = shieldEffect;
+                return;
+            }
+        }
+        Instantiate(release, other.gameObject.GetComponent<Collider>().ClosestPointOnBounds(transform.position), Quaternion.LookRotation(Vector3.up)); 
         if(other.gameObject.tag == origin||other.gameObject.tag == "Spell"){
             return;
         }

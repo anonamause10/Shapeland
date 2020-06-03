@@ -9,13 +9,14 @@ public class FireBolt : Spell
     private GameObject release;
     private GameObject explosion;
     public bool attackingDone;
+    public bool isReflected = false;
 
     public override void StartStuff(){
         //Physics.IgnoreCollision(player.gameObject.GetComponent<Collider>(), GetComponent<Collider>(), bool ignore = true);
         transform.up = (player.hit.distance!=0?player.hit.point:player.cameraT.position+player.cameraT.forward*100)-player.wandTip.transform.position;
         release = (GameObject)Resources.Load("Prefabs/FireBoltRelease");
         explosion = (GameObject)Resources.Load("Prefabs/FireBoltExplosion");
-        Instantiate(release, player.wandTip.transform.position, Quaternion.LookRotation(transform.up));
+        Instantiate(release, transform.position, Quaternion.LookRotation(transform.up));
     }
 
     public override void LateUpdate()
@@ -28,7 +29,6 @@ public class FireBolt : Spell
     }
 
     public override void UseEffect(){
-        print(origin);
         transform.Translate(velocity*Time.deltaTime*transform.up,Space.World);  
         timer -= Time.deltaTime;
         if(timer<0){
@@ -46,6 +46,14 @@ public class FireBolt : Spell
     }
 
     void OnTriggerEnter(Collider other){
+        if(other.gameObject.tag == "Shield"){
+            Shield shield = other.gameObject.GetComponent<Shield>();
+            Vector3 shieldEffect = shield.DoParryEffect(this);
+            if(shieldEffect!=Vector3.zero){
+                transform.up = shieldEffect;
+                return;
+            }
+        }
         if(other.gameObject.tag == origin||other.gameObject.tag == "Spell"){
             return;
         }

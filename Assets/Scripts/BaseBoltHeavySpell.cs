@@ -9,6 +9,7 @@ public class BaseBoltHeavySpell : Spell
     private GameObject release;
     private GameObject explosion;
     public bool attackingDone;
+    public bool isReflected = false;
 
     public override void StartStuff(){
         damage = 6;
@@ -16,7 +17,7 @@ public class BaseBoltHeavySpell : Spell
         transform.up = (player.hit.distance!=0?player.hit.point:player.cameraT.position+player.cameraT.forward*100)-player.wandTip.transform.position;
         release = (GameObject)Resources.Load("Prefabs/BaseBoltRelease");
         explosion = (GameObject)Resources.Load("Prefabs/BaseBoltRelease");
-        Instantiate(release, player.wandTip.transform.position, Quaternion.LookRotation(transform.up));
+        Instantiate(release, transform.position, Quaternion.LookRotation(transform.up));
     }
 
     public override void LateUpdate()
@@ -44,9 +45,17 @@ public class BaseBoltHeavySpell : Spell
     public override void UseEffectEnemy(GameObject enemy){
         enemy.GetComponent<MoveHeinz>().health-=damage;
         enemy.GetComponent<MoveHeinz>().SetKnockbackDirection(transform.position,damage * 4);
-    }
+    }   
 
     void OnTriggerEnter(Collider other){
+        if(other.gameObject.tag == "Shield"){
+            Shield shield = other.gameObject.GetComponent<Shield>();
+            Vector3 shieldEffect = shield.DoParryEffect(this);
+            if(shieldEffect!=Vector3.zero){
+                transform.up = shieldEffect;
+                return;
+            }
+        }
         if(other.gameObject.tag == origin||other.gameObject.tag == "Spell"){
             return;
         }

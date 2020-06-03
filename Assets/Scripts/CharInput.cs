@@ -16,6 +16,8 @@ public class CharInput : MonoBehaviour
     public bool switchAttackModePrev = false;
     public bool switchSpell = false;
     public bool switchSpellPrev = false;
+    public bool shield = false;
+    public bool shieldPrev = false;
     public bool spawnBoi;
     public int knockback;
     public Transform cameraT;
@@ -27,6 +29,7 @@ public class CharInput : MonoBehaviour
     public virtual void CollectInputs(){
         leftMouseDownPrev = leftMouseDown;
         switchAttackModePrev = switchAttackMode;
+        shieldPrev = shield;
         switchAttackMode = false;
         switchSpellPrev = switchSpell;
         jumpingPrev = jumping;
@@ -35,6 +38,7 @@ public class CharInput : MonoBehaviour
         leftMouseDown = Input.GetMouseButton(0);
         switchSpell = Input.GetKeyDown(KeyCode.Q);
         switchAttackMode = Input.GetMouseButton(2);
+        shield = Input.GetMouseButton(1);
         knockback = GetPressedNumber();
         walking = Input.GetKey (KeyCode.LeftShift);
         spawnBoi = Input.GetKeyDown(KeyCode.T);

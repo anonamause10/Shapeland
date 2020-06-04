@@ -92,7 +92,7 @@ public class MoveHeinz : MonoBehaviour {
 		forearm = arm.Find("Bone.008");
 		hand = forearm.Find("Bone.009");
 		cameraT = charInput.cameraT;
-		spells = new String[]{"BaseBoltSpell","BaseBoltHeavySpell","FireBoltCharge","DeathSpell","FreezeSpell"};
+		spells = new String[]{"DeathSpell","BaseBoltSpell","BaseBoltHeavySpell","FireBoltCharge","FreezeSpell"};
 		spell = (GameObject)Resources.Load("Prefabs/" + spells[spellIndex]);
 		shield = (GameObject)Resources.Load("Prefabs/DefaultShield");
 		health = totalHealth;
@@ -120,14 +120,15 @@ public class MoveHeinz : MonoBehaviour {
 
 		
 		launchAttack();
-		//print(knockback);
+		if(gameObject.tag=="Player"){
+			print(health);
+		}
 		
 		Debug.DrawRay(transform.position,forceVelVec*100,Color.red);
 	}
 
 	public virtual void move(){
 		//walking
-		
 		jumpmode = 0;
 		speedMult = Mathf.SmoothDamp(speedMult, 1, ref speedMultDamp, 15f);
 		if(knockback==0){
@@ -150,8 +151,12 @@ public class MoveHeinz : MonoBehaviour {
 		}
 		
 		//movement handling
+	
 		accelVec.y = -gravity;
         moveVec+=accelVec*Time.deltaTime;
+		if(controller.isGrounded&&moveVec.y<-30f){
+			moveVec.y = -30f;
+		}
 		controller.Move((moveVec) * Time.deltaTime);
 		forceVelVec = Vector3.Lerp(forceVelVec,Vector3.zero,5*Time.deltaTime);
 		float animationSpeedPercent = ((!walking) ? currentSpeed / runSpeed : currentSpeed / walkSpeed * .5f);
@@ -241,12 +246,13 @@ public class MoveHeinz : MonoBehaviour {
 				currShield = Instantiate(shield,wandTip.transform.position,Quaternion.identity);
 				currShield.GetComponent<Shield>().SetPlayer(this);
 			}
-			animator.SetInteger("attack",2);
+			animator.SetInteger("shield",1);
 		}else{
 			shielding = false;
 			if(currShield!=null){
 				currShield.GetComponent<Shield>().kill();
 			}
+			animator.SetInteger("shield",0);
 		}
 		//attacking
 		bool valid = attackValid();

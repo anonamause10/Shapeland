@@ -30,7 +30,9 @@ public class Shield : MonoBehaviour
         }
         transform.position = playerScript.wandTip.transform.position;
         transform.forward = playerScript.transform.forward;
-        density = Mathf.Lerp(density,0.4f,2*Time.deltaTime);
+        transform.RotateAround(transform.position,transform.forward,180);
+        transform.RotateAround(transform.position,-1*transform.right,playerScript.cameraT.eulerAngles.x);
+        density = Mathf.Lerp(density,0.35f,5*Time.deltaTime);
         rend.material.SetFloat("_Density", density);
         elapsedTime+=Time.deltaTime;
     }
@@ -43,8 +45,15 @@ public class Shield : MonoBehaviour
         return Vector3.zero;
     }
 
-    void OnTriggerEnter(Collider other){
-
+    void OnCollisionStay(Collision other){
+        if(other.gameObject.tag == (playerScript.tag=="Enemy"?"Player":"Enemy")){
+            other.gameObject.GetComponent<MoveHeinz>().health-=10*Time.deltaTime;
+            if(other.gameObject.GetComponent<Rigidbody>().isKinematic){
+                other.gameObject.GetComponent<MoveHeinz>().SetKnockbackDirection(transform.position,5);
+            }else{
+                other.gameObject.GetComponent<Rigidbody>().AddForce(Vector3.forward*100);
+            }
+        }
     }
 
     public void kill(){

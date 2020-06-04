@@ -11,6 +11,7 @@ public class EnemyInput : CharInput
     public Vector3 vecToPlayer;
     public Vector3 vecToPlayerPrev;
     public float sightRadius = 30f;
+    public float minPlayerRadius = 10f;
 
     public override void Start(){    
         player = GameObject.Find("paris");
@@ -28,11 +29,16 @@ public class EnemyInput : CharInput
         vecToPlayer = player.transform.position-transform.position;
         cameraT.forward = vecToPlayer;
         if(controllerScript.attackMode){
-            if(controllerScript.hit.distance!=0&&controllerScript.hit.collider.gameObject.tag == "Player"){
+            if(controllerScript.hit.distance!=0&&controllerScript.hit.collider.gameObject.layer == (gameObject.layer==8?9:8)){
                 leftMouseDown = true;
             }
             //Vector3 projectedInputDir = Vector3.ProjectOnPlane(vecToPlayer,Vector3.up);
-            inputDir = Vector2.up;//Vector2Extension.Rotate(new Vector2(projectedInputDir.x,projectedInputDir.z),cameraT.eulerAngles.y);
+            if(Vector2Extension.XzPlaneMagnitude(vecToPlayer)>minPlayerRadius+0.5f){
+                inputDir = Vector2.up;
+            }else{
+                inputDir = Vector2.Lerp(Vector2.down,Vector2.zero,Vector2Extension.XzPlaneMagnitude(vecToPlayer)/minPlayerRadius);
+            }
+            //Vector2Extension.Rotate(new Vector2(projectedInputDir.x,projectedInputDir.z),cameraT.eulerAngles.y);
         }
         if(vecToPlayer.magnitude<sightRadius){
             controllerScript.attackMode = true;

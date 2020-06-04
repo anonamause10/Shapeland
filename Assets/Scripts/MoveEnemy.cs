@@ -33,7 +33,7 @@ public class MoveEnemy : MoveHeinz
     public override void kill(){
         knockback = Vector3.Dot(projVec,forwardVec)>0?8:9;
         animator.SetInteger("knockback", Vector3.Dot(projVec,forwardVec)>0?8:9);
-        if(animator.GetCurrentAnimatorStateInfo(0).IsName("Knockback.dead")){
+        if(animator.GetCurrentAnimatorStateInfo(0).IsName("Knockback.dead")||transform.position.y<-10){
 			Destroy(gameObject);
 		}
 

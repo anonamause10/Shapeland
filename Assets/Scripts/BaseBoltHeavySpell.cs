@@ -10,6 +10,7 @@ public class BaseBoltHeavySpell : Spell
     private GameObject explosion;
     public bool attackingDone;
     public bool isReflected = false;
+    public float coolDownTimer = 0.5f;
 
     public override void StartStuff(){
         damage = 6;
@@ -69,13 +70,13 @@ public class BaseBoltHeavySpell : Spell
         StopEffect();
     }
 
-    public override bool NewEffectValid(MoveHeinz other){
+    public override bool NewEffectValid(MoveHeinz other, float timeSinceUse){
         attackingDone = !other.attackingPrev;
-        return attackingDone;
+        return attackingDone&&timeSinceUse>coolDownTimer;
     }
 
-    public override bool EffectValid(MoveHeinz other){
-        return other.MouseDown();
+    public override bool EffectValid(MoveHeinz other, float timeSinceUse){
+        return other.MouseDown()&&timeSinceUse>coolDownTimer;
     }
  
 }

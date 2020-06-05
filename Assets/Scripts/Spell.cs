@@ -6,6 +6,8 @@ using UnityEngine;
 public class Spell : MonoBehaviour
 {
     public MoveHeinz player;
+    public float elapsedTime;
+    public float coolDownTime;
     public bool going = true;
     public bool buff = false;//spell that boosts player stats or not
     public float damage = 0;
@@ -17,6 +19,7 @@ public class Spell : MonoBehaviour
     void Start()
     {
         //player = GameObject.Find("paris").GetComponent<MoveHeinz>();
+        elapsedTime = 0;
         StartStuff();
     }
 
@@ -48,11 +51,11 @@ public class Spell : MonoBehaviour
         
     }
 
-    public virtual bool NewEffectValid(MoveHeinz other){
-        return other.currSpell == null||!other.currSpell.GetComponent<Spell>().going;
+    public virtual bool NewEffectValid(MoveHeinz other, float timeSinceUse){
+        return (other.currSpell == null||!other.currSpell.GetComponent<Spell>().going)&&timeSinceUse>coolDownTime;
     }
 
-    public virtual bool EffectValid(MoveHeinz other){
-        return true;
+    public virtual bool EffectValid(MoveHeinz other, float timeSinceUse){
+        return timeSinceUse>coolDownTime;
     }
 }

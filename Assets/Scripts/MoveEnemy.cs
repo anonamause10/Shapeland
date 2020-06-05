@@ -9,6 +9,7 @@ public class MoveEnemy : MoveHeinz
     protected float healthBarDamp = 0;
 
     public override void Start(){
+        spellIndex = 3;
         base.Start();
         charInput = (EnemyInput)charInput;
         charInput.controllerScript = this;
@@ -34,6 +35,9 @@ public class MoveEnemy : MoveHeinz
         knockback = Vector3.Dot(projVec,forwardVec)>0?8:9;
         animator.SetInteger("knockback", Vector3.Dot(projVec,forwardVec)>0?8:9);
         if(animator.GetCurrentAnimatorStateInfo(0).IsName("Knockback.dead")||transform.position.y<-10){
+            if(currShield!=null){
+                Destroy(currShield);
+            }
 			Destroy(gameObject);
 		}
 

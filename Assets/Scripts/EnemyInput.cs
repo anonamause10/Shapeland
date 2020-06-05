@@ -8,6 +8,7 @@ public class EnemyInput : CharInput
     public GameObject centerPoint;
     public GameObject player;
     public MoveHeinz playerScript;
+    public MoveHeinz thisScript;
     public Vector3 vecToPlayer;
     public Vector3 vecToPlayerPrev;
     public float sightRadius = 30f;
@@ -17,6 +18,7 @@ public class EnemyInput : CharInput
         player = GameObject.Find("paris");
         playerScript = player.GetComponent<MoveHeinz>();
         cameraT = centerPoint.transform;
+        thisScript = GetComponent<MoveHeinz>();
     }
 
     public override void CollectInputs(){
@@ -29,7 +31,7 @@ public class EnemyInput : CharInput
         vecToPlayer = player.transform.position-transform.position;
         cameraT.forward = vecToPlayer;
         if(controllerScript.attackMode){
-            if(controllerScript.hit.distance!=0&&controllerScript.hit.collider.gameObject.layer == (gameObject.layer==8?9:8)){
+            if(controllerScript.hit.distance!=0&&controllerScript.hit.collider.gameObject.layer==(gameObject.layer==8?9:8)&&(controllerScript.attackValid())){
                 leftMouseDown = true;
             }
             //Vector3 projectedInputDir = Vector3.ProjectOnPlane(vecToPlayer,Vector3.up);

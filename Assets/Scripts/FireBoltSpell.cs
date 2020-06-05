@@ -47,8 +47,8 @@ public class FireBoltSpell : Spell
         Destroy(gameObject);
     }
 
-    public override bool EffectValid(MoveHeinz other){
-        return Input.GetMouseButton(0)&&timer<finalTime;
+    public override bool EffectValid(MoveHeinz other, float timeSinceUse){
+        return Input.GetMouseButton(0)&&timer<finalTime&&timeSinceUse>coolDownTime;
     }
  
 }

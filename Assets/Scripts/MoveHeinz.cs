@@ -63,16 +63,18 @@ public class MoveHeinz : MonoBehaviour {
 	public GameObject wandTip;
 	public bool attackMode = false;
 	public bool attackValidPrev;
+	public bool valid;
 	public event Action OnAttackModeSwitch;
 	protected float armturnvel = 1f;
 	protected float armdeg = 0;
 	protected float armprev = 0;
 	protected int armTurnFrameCounter;
 	public RaycastHit hit;
-	protected GameObject spell;
+	public GameObject spell;
 	public GameObject currSpell;
-	protected int spellIndex;
+	public int spellIndex;
 	protected String[] spells;
+	public float[] timeSinceUse;
 	protected bool shielding = false;
 	public GameObject currShield;
 	protected GameObject shield; 
@@ -93,6 +95,11 @@ public class MoveHeinz : MonoBehaviour {
 		hand = forearm.Find("Bone.009");
 		cameraT = charInput.cameraT;
 		spells = new String[]{"DeathSpell","BaseBoltSpell","BaseBoltHeavySpell","FireBoltCharge","FreezeSpell"};
+		timeSinceUse = new float[spells.Length];
+		for (int i = 0; i < timeSinceUse.Length; i++)
+		{
+			timeSinceUse[i] = 5000;
+		}
 		spell = (GameObject)Resources.Load("Prefabs/" + spells[spellIndex]);
 		shield = (GameObject)Resources.Load("Prefabs/DefaultShield");
 		health = totalHealth;
@@ -117,11 +124,12 @@ public class MoveHeinz : MonoBehaviour {
 			//}
 		}		
 		attack();
+		HandleCooldownTimers();
 
 		
 		launchAttack();
-		if(gameObject.tag=="Player"){
-			print(health);
+		if(gameObject.tag=="Enemy"){
+			print(charInput.leftMouseDown);//timeSinceUse[2]);
 		}
 		
 		Debug.DrawRay(transform.position,forceVelVec*100,Color.red);
@@ -255,7 +263,7 @@ public class MoveHeinz : MonoBehaviour {
 			animator.SetInteger("shield",0);
 		}
 		//attacking
-		bool valid = attackValid();
+		valid = attackValid();
 		if(charInput.leftMouseDown&&valid){
 			isAttacking = true;
 			animator.SetInteger("attack",2);
@@ -289,7 +297,7 @@ public class MoveHeinz : MonoBehaviour {
 
 	public virtual void ApplyForce(Vector3 force){
 		forceVelVec = new Vector3(force.x,Mathf.Abs(force.y),force.z);
-		print(forceVelVec);
+		//print(forceVelVec);
 	}
 
 	public virtual void SetKnockbackDirection(Vector3 projPos,float magnitude){
@@ -339,7 +347,7 @@ public class MoveHeinz : MonoBehaviour {
 
 	public virtual void launchAttack(){
 		if(isAttacking){
-			if(spell.GetComponent<Spell>().NewEffectValid(this)){
+			if(spell.GetComponent<Spell>().NewEffectValid(this,timeSinceUse[spellIndex])){
 				currSpell = Instantiate(spell,wandTip.transform.position,Quaternion.identity) as GameObject;
 				currSpell.GetComponent<Spell>().SetPlayer(this);
 			}
@@ -379,12 +387,23 @@ public class MoveHeinz : MonoBehaviour {
 
 	}
 
+	public virtual void HandleCooldownTimers(){
+		for (int i = 0; i < timeSinceUse.Length; i++){
+			if(i==spellIndex){
+				if(attackingPrev&&attackingPrev){
+					timeSinceUse[i] = 0;
+				}
+			}
+			timeSinceUse[i]+=Time.deltaTime;
+		}
+	}
+
 	public virtual bool attackValid(){
 		Vector3 forward = Vector3.ProjectOnPlane(transform.forward, Vector3.up);
 		Vector3 camforward = Vector3.ProjectOnPlane(cameraT.forward, Vector3.up);
 		float degree = Vector3.SignedAngle(camforward, forward, Vector3.up);
 		degree = degree<0?360+degree:degree;
-		return !(degree>135&&degree<225)&&spell.GetComponent<Spell>().EffectValid(this)&&knockback==0&&!shielding;
+		return !(degree>135&&degree<225)&&spell.GetComponent<Spell>().EffectValid(this,timeSinceUse[spellIndex])&&knockback==0&&!shielding;
 	}
 
 	public virtual bool MouseDown(){
@@ -413,6 +432,9 @@ public class MoveHeinz : MonoBehaviour {
     }
 
 	public virtual void kill(){
+		if(currShield!=null){
+            Destroy(currShield);
+        }
 		Destroy(gameObject);
 	}
 

@@ -340,7 +340,7 @@ PrefabInstance:
     - target: {fileID: -4216859302048453862, guid: 6380d9397ff914b46adedf3472384cf9,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 10
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 6380d9397ff914b46adedf3472384cf9,
         type: 3}
@@ -1357,7 +1357,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1687258581}
   m_LocalRotation: {x: 0.17490274, y: -0.0000015229285, z: 0.000008573073, w: 0.98458576}
-  m_LocalPosition: {x: 10, y: 13, z: 75}
+  m_LocalPosition: {x: 10, y: 8, z: 75}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1451,7 +1451,9 @@ MonoBehaviour:
   wandTip: {fileID: 1263874987}
   attackMode: 1
   attackValidPrev: 0
+  spell: {fileID: 0}
   currSpell: {fileID: 0}
+  timeSinceUse: []
   currShield: {fileID: 0}
   cameraT: {fileID: 0}
 --- !u!54 &1765340515

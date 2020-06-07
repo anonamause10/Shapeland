@@ -31,7 +31,7 @@ public class EnemyInput : CharInput
         vecToPlayer = player.transform.position-transform.position;
         cameraT.forward = vecToPlayer;
         if(controllerScript.attackMode){
-            if(controllerScript.hit.distance!=0&&controllerScript.hit.collider.gameObject.layer==(gameObject.layer==8?9:8)&&(controllerScript.attackValid())){
+            if(controllerScript.hit.distance!=0&&hitLayerIsEnemy(controllerScript.hit.collider.gameObject.layer)){
                 leftMouseDown = true;
             }
             //Vector3 projectedInputDir = Vector3.ProjectOnPlane(vecToPlayer,Vector3.up);
@@ -45,6 +45,11 @@ public class EnemyInput : CharInput
         if(vecToPlayer.magnitude<sightRadius){
             controllerScript.attackMode = true;
         }
+    }
+
+    public bool hitLayerIsEnemy(int otherlayer){
+        int enemyLayer = gameObject.layer==8?9:8;
+        return otherlayer == enemyLayer||otherlayer == enemyLayer+3;
     }
 
 }

@@ -26,7 +26,7 @@ public class Spell : MonoBehaviour
     public virtual void SetPlayer(MoveHeinz boi){
         player = boi;
         origin = boi.gameObject.tag;
-        opposing = origin == "Player"?"Enemy":"Player";
+        opposing = (origin == "Player")?"Enemy":"Player";
     }
 
     public virtual void StartStuff(){

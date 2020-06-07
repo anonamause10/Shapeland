@@ -77,7 +77,8 @@ public class MoveHeinz : MonoBehaviour {
 	public float[] timeSinceUse;
 	protected bool shielding = false;
 	public GameObject currShield;
-	protected GameObject shield; 
+	protected GameObject shield;
+	protected int layermasknum; 
 
 	//controller stuff
 	protected CharacterController controller;
@@ -104,11 +105,12 @@ public class MoveHeinz : MonoBehaviour {
 		shield = (GameObject)Resources.Load("Prefabs/DefaultShield");
 		health = totalHealth;
 		
+		layermasknum = ~((1<<(gameObject.layer))|(1<<(gameObject.layer+3)));
 		//animator.speed = 0.5f;
 	}
 
 	public virtual void LateUpdate () {
-		Physics.Raycast(cameraT.position, cameraT.forward, out hit, Mathf.Infinity, ~(1<<(gameObject.layer)));
+		Physics.Raycast(cameraT.position, cameraT.forward, out hit, Mathf.Infinity, layermasknum);
 		HandleDamage();
 		attackingPrev = isAttacking;
 		charInput.CollectInputs();
@@ -128,9 +130,6 @@ public class MoveHeinz : MonoBehaviour {
 
 		
 		launchAttack();
-		if(gameObject.tag=="Enemy"){
-			print(charInput.leftMouseDown);//timeSinceUse[2]);
-		}
 		
 		Debug.DrawRay(transform.position,forceVelVec*100,Color.red);
 	}
@@ -403,11 +402,16 @@ public class MoveHeinz : MonoBehaviour {
 		Vector3 camforward = Vector3.ProjectOnPlane(cameraT.forward, Vector3.up);
 		float degree = Vector3.SignedAngle(camforward, forward, Vector3.up);
 		degree = degree<0?360+degree:degree;
+		bool spellvalidity = attackingPrev?spell.GetComponent<Spell>().EffectValid(this,timeSinceUse[spellIndex]):spell.GetComponent<Spell>().NewEffectValid(this,timeSinceUse[spellIndex]);
 		return !(degree>135&&degree<225)&&spell.GetComponent<Spell>().EffectValid(this,timeSinceUse[spellIndex])&&knockback==0&&!shielding;
 	}
 
 	public virtual bool MouseDown(){
 		return charInput.leftMouseDown&&!charInput.leftMouseDownPrev;
+	}
+
+	public virtual bool AttackReady(){
+		return !isAttacking;// && spell.NewEffectValid();
 	}
 
 	public virtual void HandleDamage(){

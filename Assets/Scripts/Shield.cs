@@ -19,11 +19,13 @@ public class Shield : MonoBehaviour
 
     public void SetPlayer(MoveHeinz player){
         playerScript = player;
+        gameObject.layer = player.gameObject.layer+3;
     }
 
     // Update is called once per frame
     void LateUpdate()
     {
+        //print(gameObject.layer);
         if(dying){
             kill();
             return;
@@ -57,6 +59,9 @@ public class Shield : MonoBehaviour
     }
 
     public void kill(){
+        if(!dying){
+            GetComponent<Collider>().isTrigger = true;
+        }
         dying = true;
         density = Mathf.Lerp(density,0,2*Time.deltaTime);
         rend.material.SetFloat("_Density", density);

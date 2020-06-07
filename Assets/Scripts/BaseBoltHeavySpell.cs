@@ -64,7 +64,7 @@ public class BaseBoltHeavySpell : Spell
             return;
         }
         Instantiate(explosion, other.gameObject.GetComponent<Collider>().ClosestPointOnBounds(transform.position), Quaternion.LookRotation(Vector3.up)); 
-        if(other.gameObject.tag == opposing){
+        if(other.gameObject.tag == opposing&&other.GetComponent<MoveHeinz>()!=null){
             UseEffectEnemy(other.gameObject);
         }
         StopEffect();
@@ -75,8 +75,10 @@ public class BaseBoltHeavySpell : Spell
         return attackingDone&&timeSinceUse>coolDownTimer;
     }
 
+    
     public override bool EffectValid(MoveHeinz other, float timeSinceUse){
-        return other.MouseDown()&&timeSinceUse>coolDownTimer;
+        bool playerIsAI = other.charInput.GetType() == typeof(EnemyInput);
+        return (playerIsAI?true:other.MouseDown())&&timeSinceUse>coolDownTimer;
     }
  
 }

@@ -19,9 +19,9 @@ TagManager:
   - Player
   - Enemy
   - Solo
-  - 
-  - 
-  - 
+  - Playershield
+  - Enemyshield
+  - Soloshield
   - 
   - 
   - 

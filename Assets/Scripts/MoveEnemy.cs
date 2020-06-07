@@ -9,7 +9,7 @@ public class MoveEnemy : MoveHeinz
     protected float healthBarDamp = 0;
 
     public override void Start(){
-        spellIndex = 3;
+        spellIndex = 2;
         base.Start();
         charInput = (EnemyInput)charInput;
         charInput.controllerScript = this;

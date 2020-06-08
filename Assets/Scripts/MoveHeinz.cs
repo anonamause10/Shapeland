@@ -102,6 +102,7 @@ public class MoveHeinz : MonoBehaviour {
 			timeSinceUse[i] = 5000;
 		}
 		spell = (GameObject)Resources.Load("Prefabs/" + spells[spellIndex]);
+		spell.GetComponent<Spell>().PreStartStuff();
 		shield = (GameObject)Resources.Load("Prefabs/DefaultShield");
 		health = totalHealth;
 		
@@ -243,6 +244,7 @@ public class MoveHeinz : MonoBehaviour {
 		if(charInput.getSwitchSpellDown()){
 			spellIndex = (spellIndex+1)%spells.Length;
 			spell = (GameObject)Resources.Load("Prefabs/" + spells[spellIndex]);
+			spell.GetComponent<Spell>().PreStartStuff();
 		}
 		if(charInput.spawnBoi){
 			Instantiate((GameObject)Resources.Load("Prefabs/Enemies/Enemy"),(hit.distance!=0?hit.point:(cameraT.position+cameraT.forward*100)),Quaternion.identity);
@@ -285,7 +287,7 @@ public class MoveHeinz : MonoBehaviour {
 				OnAttackModeSwitch();
 			}
 		}
-		if((isAttacking||attackFrameCounter>0||attackMode)&&controller.isGrounded){
+		if((isAttacking||attackFrameCounter>0||attackMode||shielding)&&controller.isGrounded){
 			arm.RotateAround(arm.position,transform.right,!flying?(cameraT.eulerAngles.x+(attackMode?-20*(currentSpeed/runSpeed):0)):0);
 		}
 		if(attackMode||isAttacking){
@@ -389,7 +391,7 @@ public class MoveHeinz : MonoBehaviour {
 	public virtual void HandleCooldownTimers(){
 		for (int i = 0; i < timeSinceUse.Length; i++){
 			if(i==spellIndex){
-				if(attackingPrev&&attackingPrev){
+				if(attackingPrev&&!isAttacking){
 					timeSinceUse[i] = 0;
 				}
 			}

@@ -10,7 +10,6 @@ public class BaseBoltHeavySpell : Spell
     private GameObject explosion;
     public bool attackingDone;
     public bool isReflected = false;
-    public float coolDownTimer = 0.5f;
 
     public override void StartStuff(){
         damage = 6;
@@ -19,6 +18,10 @@ public class BaseBoltHeavySpell : Spell
         release = (GameObject)Resources.Load("Prefabs/BaseBoltRelease");
         explosion = (GameObject)Resources.Load("Prefabs/BaseBoltRelease");
         Instantiate(release, transform.position, Quaternion.LookRotation(transform.up));
+    }
+
+    public override void PreStartStuff(){
+        coolDownTime = 1.5f;
     }
 
     public override void LateUpdate()
@@ -72,13 +75,13 @@ public class BaseBoltHeavySpell : Spell
 
     public override bool NewEffectValid(MoveHeinz other, float timeSinceUse){
         attackingDone = !other.attackingPrev;
-        return attackingDone&&timeSinceUse>coolDownTimer;
+        return attackingDone&&timeSinceUse>coolDownTime;
     }
 
     
     public override bool EffectValid(MoveHeinz other, float timeSinceUse){
         bool playerIsAI = other.charInput.GetType() == typeof(EnemyInput);
-        return (playerIsAI?true:other.MouseDown())&&timeSinceUse>coolDownTimer;
+        return (playerIsAI?!other.attackingPrev:other.MouseDown())&&timeSinceUse>coolDownTime;
     }
  
 }

@@ -6,8 +6,8 @@ public class FireBoltSpell : Spell
 {
     private float timer = 0;
     private float radius = 0.1f;
-    private float endTime = 3f;
-    private float finalTime = 10f;
+    private float endTime = 2f;
+    private float finalTime = 5f;
     private GameObject bolt;
     private Renderer rend;
     public bool attackingDone;
@@ -18,6 +18,10 @@ public class FireBoltSpell : Spell
         transform.localScale = Vector3.zero;
         bolt = (GameObject)Resources.Load("Prefabs/FireBoltSpell");
         rend = GetComponent<Renderer>();
+    }
+
+    public override void PreStartStuff(){
+        coolDownTime = 2.5f;
     }
 
     public override void LateUpdate()
@@ -44,11 +48,12 @@ public class FireBoltSpell : Spell
         GameObject firedBolt = Instantiate(bolt, player.wandTip.transform.position,Quaternion.identity);
         firedBolt.GetComponent<Spell>().SetPlayer(player);
         firedBolt.GetComponent<Spell>().damage = Mathf.Clamp(timer/endTime,0.2f,1)*20;
+        player.isAttacking = false;
         Destroy(gameObject);
     }
 
     public override bool EffectValid(MoveHeinz other, float timeSinceUse){
-        return Input.GetMouseButton(0)&&timer<finalTime&&timeSinceUse>coolDownTime;
+        return /*other.charInput.leftMouseDown&&*/timer<finalTime&&timeSinceUse>coolDownTime;
     }
  
 }

@@ -5,7 +5,6 @@ using UnityEngine;
 public class FireBoltBoom : Boom
 {   
     private float totalTime = 0.8f;
-    private MoveHeinz player;
     public float radius = 20;
     public string opposing;
     public string origin;
@@ -17,9 +16,13 @@ public class FireBoltBoom : Boom
     }
 
     public void SetPlayer(MoveHeinz boi){
-        player = boi;
-        origin = boi.gameObject.tag;
-        opposing = origin == "Player"?"Enemy":"Player";
+        if(boi!=null){
+            origin = boi.gameObject.tag;
+            opposing = origin == "Player"?"Enemy":"Player";
+        }else{
+            origin = "Enemy";
+            opposing = origin == "Player"?"Enemy":"Player";
+        }
     }
 
     // Update is called once per frame
@@ -41,7 +44,7 @@ public class FireBoltBoom : Boom
         if(other.gameObject.tag == origin||other.gameObject.tag == "Spell"){
             return;
         }
-        if(other.gameObject.tag == opposing){
+        if(other.gameObject.tag == opposing&&other.GetComponent<MoveHeinz>()!=null){
             Vector3 force = (other.gameObject.transform.position-transform.position).normalized*radius*200;
             MoveHeinz playerScript = other.gameObject.GetComponent<MoveHeinz>();
             playerScript.health-=radius;

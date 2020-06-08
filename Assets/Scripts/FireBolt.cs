@@ -60,7 +60,7 @@ public class FireBolt : Spell
         GameObject baboom = Instantiate(explosion, other.gameObject.GetComponent<Collider>().ClosestPointOnBounds(transform.position), Quaternion.LookRotation(Vector3.up)); 
         baboom.GetComponent<FireBoltBoom>().radius = damage;
         baboom.GetComponent<FireBoltBoom>().SetPlayer(player);
-        if(other.gameObject.tag == opposing){
+        if(other.gameObject.tag == opposing&&other.GetComponent<MoveHeinz>()!=null){
             UseEffectEnemy(other.gameObject);
         }
         StopEffect();

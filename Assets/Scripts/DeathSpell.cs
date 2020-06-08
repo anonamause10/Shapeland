@@ -50,7 +50,7 @@ public class DeathSpell : Spell
 
     public void OnParticleCollision(GameObject other)
     {
-        if(other.tag == opposing){
+        if(other.tag == opposing&&other.GetComponent<MoveHeinz>()!=null){
 			UseEffectEnemy(other);
 		}
     }   

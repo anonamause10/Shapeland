@@ -949,7 +949,7 @@ MonoBehaviour:
   thisScript: {fileID: 0}
   vecToPlayer: {x: 0, y: 0, z: 0}
   vecToPlayerPrev: {x: 0, y: 0, z: 0}
-  sightRadius: 99.35
+  sightRadius: 75
   minPlayerRadius: 10
 --- !u!114 &3978452039935766179
 MonoBehaviour:

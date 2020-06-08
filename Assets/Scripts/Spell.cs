@@ -29,6 +29,10 @@ public class Spell : MonoBehaviour
         opposing = (origin == "Player")?"Enemy":"Player";
     }
 
+    public virtual void PreStartStuff(){
+        coolDownTime = 0;
+    }
+
     public virtual void StartStuff(){
 
     }

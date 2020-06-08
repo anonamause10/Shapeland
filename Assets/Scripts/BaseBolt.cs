@@ -67,7 +67,7 @@ public class BaseBolt : Spell
         if(other.gameObject.tag == origin||other.gameObject.tag == "Spell"){
             return;
         }
-        if(other.gameObject.tag == opposing){
+        if(other.gameObject.tag == opposing&&other.GetComponent<MoveHeinz>()!=null){
             UseEffectEnemy(other.gameObject);
         }
         StopEffect();

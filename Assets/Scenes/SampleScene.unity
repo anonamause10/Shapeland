@@ -1615,7 +1615,7 @@ MonoBehaviour:
   runSpeed: 30
   flySpeed: 100
   walking: 0
-  totalHealth: 650
+  totalHealth: 20000
   health: 0
   dead: 0
   speedMult: 1

@@ -26,6 +26,7 @@ public class EnemyInput : CharInput
         vecToPlayerPrev = vecToPlayer;
         leftMouseDownPrev = leftMouseDown;
         leftMouseDown = false;
+        walking = false;
         switchAttackModePrev = switchAttackMode;
         switchAttackMode = false;
         vecToPlayer = player.transform.position-transform.position;
@@ -41,6 +42,9 @@ public class EnemyInput : CharInput
                 inputDir = Vector2.Lerp(Vector2.down,Vector2.zero,Vector2Extension.XzPlaneMagnitude(vecToPlayer)/minPlayerRadius);
             }
             //Vector2Extension.Rotate(new Vector2(projectedInputDir.x,projectedInputDir.z),cameraT.eulerAngles.y);
+        }
+        if(Vector2Extension.XzPlaneMagnitude(vecToPlayer)<0.5*sightRadius){
+            walking = true;
         }
         if(vecToPlayer.magnitude<sightRadius){
             controllerScript.attackMode = true;

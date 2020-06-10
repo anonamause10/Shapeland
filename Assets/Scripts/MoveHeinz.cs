@@ -79,7 +79,8 @@ public class MoveHeinz : MonoBehaviour {
 	protected bool shielding = false;
 	public GameObject currShield;
 	protected GameObject shield;
-	protected int layermasknum; 
+	protected int layermasknum;
+	public bool drawPad = false;
 	public float timeSpeed =1.0f;
 	protected float timeSpeedDamp;
 
@@ -116,6 +117,7 @@ public class MoveHeinz : MonoBehaviour {
 	public virtual void LateUpdate () {
 		Physics.Raycast(cameraT.position, cameraT.forward, out hit, Mathf.Infinity, layermasknum);
 		HandleDamage();
+		HandleCooldownTimers();
 		attackingPrev = isAttacking;
 		charInput.CollectInputs();
 		Knockback();
@@ -131,7 +133,6 @@ public class MoveHeinz : MonoBehaviour {
 		}		
 		attack();
 
-		HandleCooldownTimers();
 		if(gameObject.tag=="Player"){
 			HandleTimeScale(timeSpeed);
 		}
@@ -151,7 +152,7 @@ public class MoveHeinz : MonoBehaviour {
 			inputDir = Vector2.SmoothDamp(inputDir, input.normalized, ref inputSmoothDamp, !controller.isGrounded?turnSmoothTime:turnSmoothTime*1f*((currentSpeed<5?5:currentSpeed)/runSpeed));
 			if (inputDir != Vector2.zero || animator.GetInteger("attack")==2||attackMode) {
 				float targetRotation = Mathf.Atan2 (inputDir.x*(((attackMode&&charInput.inputDir.y<0)?-1:1)), (attackMode)?Mathf.Abs(inputDir.y):inputDir.y) * Mathf.Rad2Deg + cameraT.eulerAngles.y;
-				if(input.magnitude==0&&controller.isGrounded&&attackMode){
+				if((input.magnitude==0&&controller.isGrounded&&attackMode)||drawPad){
 					targetRotation = cameraT.eulerAngles.y;
 				}
 				transform.eulerAngles = Vector3.up * Mathf.SmoothDampAngle(transform.eulerAngles.y, targetRotation, ref turnSmoothVelocity, controller.isGrounded?turnSmoothTime:turnSmoothTime*1f*((currentSpeed<5?5:currentSpeed)/runSpeed));
@@ -276,6 +277,7 @@ public class MoveHeinz : MonoBehaviour {
 		}
 		if(charInput.getDrawPadDown()){
 			timeSpeed = timeSpeed==0?1:0;
+			drawPad = !drawPad;
 		}
 		//attacking
 		valid = attackValid();

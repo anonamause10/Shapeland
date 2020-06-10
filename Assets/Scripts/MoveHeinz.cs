@@ -155,7 +155,7 @@ public class MoveHeinz : MonoBehaviour {
 				if((input.magnitude==0&&controller.isGrounded&&attackMode)||drawPad){
 					targetRotation = cameraT.eulerAngles.y;
 				}
-				transform.eulerAngles = Vector3.up * Mathf.SmoothDampAngle(transform.eulerAngles.y, targetRotation, ref turnSmoothVelocity, controller.isGrounded?turnSmoothTime:turnSmoothTime*1f*((currentSpeed<5?5:currentSpeed)/runSpeed));
+				transform.eulerAngles = Vector3.up * Mathf.SmoothDampAngle(transform.eulerAngles.y, targetRotation, ref turnSmoothVelocity, (controller.isGrounded?turnSmoothTime:turnSmoothTime*1f*((currentSpeed<5?5:currentSpeed)/runSpeed)));
 			}
 			walking = charInput.walking;
 
@@ -303,7 +303,7 @@ public class MoveHeinz : MonoBehaviour {
 				OnAttackModeSwitch();
 			}
 		}
-		if((isAttacking||attackFrameCounter>0||attackMode||shielding)&&controller.isGrounded&&Time.timeScale>0.95f){
+		if((isAttacking||attackFrameCounter>0||attackMode||shielding)&&Time.timeScale>0.95f){
 			arm.RotateAround(arm.position,transform.right,!flying?(cameraT.eulerAngles.x+(attackMode?-20*(targetSpeed/runSpeed):0)):0);
 		}
 		if(attackMode||isAttacking){

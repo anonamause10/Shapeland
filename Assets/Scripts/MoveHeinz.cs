@@ -30,6 +30,7 @@ public class MoveHeinz : MonoBehaviour {
 	protected float force = 40f;
 	public float speedMult = 1.0f;
 	protected float speedMultDamp = 0;
+	protected float targetSpeed;
 	public float currentSpeed;
 	protected float speedSmoothVelocity = 1f;
 	protected float moveMode;
@@ -79,6 +80,8 @@ public class MoveHeinz : MonoBehaviour {
 	public GameObject currShield;
 	protected GameObject shield;
 	protected int layermasknum; 
+	public float timeSpeed =1.0f;
+	protected float timeSpeedDamp;
 
 	//controller stuff
 	protected CharacterController controller;
@@ -127,7 +130,12 @@ public class MoveHeinz : MonoBehaviour {
 			//}
 		}		
 		attack();
+
 		HandleCooldownTimers();
+		if(gameObject.tag=="Player"){
+			HandleTimeScale(timeSpeed);
+		}
+		//print(armdeg);
 
 		
 		launchAttack();
@@ -137,7 +145,6 @@ public class MoveHeinz : MonoBehaviour {
 
 	public virtual void move(){
 		//walking
-		jumpmode = 0;
 		speedMult = Mathf.SmoothDamp(speedMult, 1, ref speedMultDamp, 15f);
 		if(knockback==0){
 			Vector2 input = charInput.inputDir;
@@ -150,7 +157,7 @@ public class MoveHeinz : MonoBehaviour {
 			walking = charInput.walking;
 
 
-			float targetSpeed = ((walking) ? walkSpeed : runSpeed) * inputDir.magnitude;
+			targetSpeed = ((walking) ? walkSpeed : runSpeed) * inputDir.magnitude;
 			currentSpeed = Mathf.SmoothDamp (currentSpeed, targetSpeed, ref speedSmoothVelocity, controller.isGrounded?speedSmoothTime:5f);
 		}
 
@@ -209,10 +216,12 @@ public class MoveHeinz : MonoBehaviour {
 			jumpmode = 0;
 			outFly = false;
 		}else{
-			jumpmode = (jumpTimeCounter>0.75)?1:2;
+			if(Time.timeScale>0.95f){
+				jumpmode = (jumpTimeCounter>0.75)?1:2;
+			}
 		}
 		animator.SetInteger("jump",jumpmode);
-		if((charInput.getJumpDown())&&!controller.isGrounded){
+		if((charInput.getJumpDown())&&!controller.isGrounded&&Time.timeScale>0.95f){
 			flying = true;
 			isJumping = true;
 		}
@@ -230,7 +239,7 @@ public class MoveHeinz : MonoBehaviour {
 		currentSpeed = Mathf.SmoothDamp (currentSpeed, charInput.inputDir.y==0?currentSpeed:targetSpeed, ref speedSmoothVelocity, 1f);
         moveVec = (transform.forward * currentSpeed);
 
-		if(charInput.getJumpDown()){
+		if(charInput.getJumpDown()&&Time.timeScale>0.95f){
 			flying = false;
 			transform.eulerAngles = Vector3.up*transform.eulerAngles.y;
 			outFly = true;
@@ -263,6 +272,9 @@ public class MoveHeinz : MonoBehaviour {
 			}
 			animator.SetInteger("shield",0);
 		}
+		if(charInput.getDrawPadDown()){
+			timeSpeed = timeSpeed==0?1:0;
+		}
 		//attacking
 		valid = attackValid();
 		if(charInput.leftMouseDown&&valid){
@@ -287,8 +299,8 @@ public class MoveHeinz : MonoBehaviour {
 				OnAttackModeSwitch();
 			}
 		}
-		if((isAttacking||attackFrameCounter>0||attackMode||shielding)&&controller.isGrounded){
-			arm.RotateAround(arm.position,transform.right,!flying?(cameraT.eulerAngles.x+(attackMode?-20*(currentSpeed/runSpeed):0)):0);
+		if((isAttacking||attackFrameCounter>0||attackMode||shielding)&&controller.isGrounded&&Time.timeScale>0.95f){
+			arm.RotateAround(arm.position,transform.right,!flying?(cameraT.eulerAngles.x+(attackMode?-20*(targetSpeed/runSpeed):0)):0);
 		}
 		if(attackMode||isAttacking){
 			rotateArm(cameraT.forward, transform.forward);
@@ -375,6 +387,10 @@ public class MoveHeinz : MonoBehaviour {
 		quad = (int)degree/45;
 		armdeg = Mathf.SmoothDampAngle(armdeg, degree, ref armturnvel, 0.1f);
 		armdeg = armdeg<0?armdeg%-360:armdeg%360;
+		if(quad>4&&armdeg>180){
+			armdeg = -(360-armdeg);
+		}
+		print(armdeg);
 		if(quad<3.9f){
 			arm.RotateAround(arm.position,transform.up,armdeg);
 			hand.RotateAround(hand.position,transform.up,(0.4f*(armdeg)));
@@ -384,7 +400,7 @@ public class MoveHeinz : MonoBehaviour {
 			hand.RotateAround(hand.position,transform.up,(0.3f*(armdeg)));
 		}
 
-		armprev = degree;
+		armprev = (degree%360);
 
 	}
 
@@ -405,7 +421,7 @@ public class MoveHeinz : MonoBehaviour {
 		float degree = Vector3.SignedAngle(camforward, forward, Vector3.up);
 		degree = degree<0?360+degree:degree;
 		bool spellvalidity = attackingPrev?spell.GetComponent<Spell>().EffectValid(this,timeSinceUse[spellIndex]):spell.GetComponent<Spell>().NewEffectValid(this,timeSinceUse[spellIndex]);
-		return !(degree>135&&degree<225)&&spell.GetComponent<Spell>().EffectValid(this,timeSinceUse[spellIndex])&&knockback==0&&!shielding;
+		return !(degree>135&&degree<225)&&spell.GetComponent<Spell>().EffectValid(this,timeSinceUse[spellIndex])&&knockback==0&&!shielding&&Time.timeScale>0.95f;
 	}
 
 	public virtual bool MouseDown(){
@@ -414,6 +430,12 @@ public class MoveHeinz : MonoBehaviour {
 
 	public virtual bool AttackReady(){
 		return !isAttacking;// && spell.NewEffectValid();
+	}
+
+	public virtual void HandleTimeScale(float timeScale){
+
+		Time.timeScale = Mathf.SmoothDamp(Time.timeScale,timeScale,ref timeSpeedDamp,0.01f);//Mathf.Lerp(Time.timeScale,timeScale,50*Time.deltaTime);
+
 	}
 
 	public virtual void HandleDamage(){

@@ -16,6 +16,8 @@ public class CharInput : MonoBehaviour
     public bool switchAttackModePrev = false;
     public bool switchSpell = false;
     public bool switchSpellPrev = false;
+    public bool drawPad = false;
+    public bool drawPadPrev = false;
     public bool shield = false;
     public bool shieldPrev = false;
     public bool spawnBoi;
@@ -32,12 +34,15 @@ public class CharInput : MonoBehaviour
         shieldPrev = shield;
         switchAttackMode = false;
         switchSpellPrev = switchSpell;
+        drawPadPrev = drawPad;
+        drawPad = false;
         jumpingPrev = jumping;
         jumping = Input.GetKey(KeyCode.Space);
         inputDir = new Vector2 (Input.GetAxisRaw ("Horizontal"), Input.GetAxisRaw ("Vertical"));
         leftMouseDown = Input.GetMouseButton(0);
         switchSpell = Input.GetKeyDown(KeyCode.Q);
         switchAttackMode = Input.GetMouseButton(2);
+        drawPad = Input.GetKey(KeyCode.E);
         shield = Input.GetMouseButton(1);
         knockback = GetPressedNumber();
         walking = Input.GetKey (KeyCode.LeftShift);
@@ -66,6 +71,14 @@ public class CharInput : MonoBehaviour
 
     public bool getSwitchSpellUp(){
         return !switchSpell&&switchSpellPrev;
+    }
+
+    public bool getDrawPadDown(){
+        return drawPad&&!drawPadPrev;
+    }
+
+    public bool getDrawPadUp(){
+        return !drawPad&&drawPadPrev;
     }
 
     public int GetPressedNumber() {

@@ -578,14 +578,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.9716981, g: 0, b: 0, a: 1}
+  m_Color: {r: 0.9716981, g: 0, b: 0, a: 0.5019608}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: d2fafdadbdd10a84396342ab028af1c1, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -913,6 +913,7 @@ MonoBehaviour:
   spellIndex: 0
   timeSinceUse: []
   currShield: {fileID: 0}
+  timeSpeed: 1
   cameraT: {fileID: 0}
   healthBarSlider: {fileID: 3090156785001075813}
 --- !u!114 &4919711560321598529
@@ -938,6 +939,8 @@ MonoBehaviour:
   switchAttackModePrev: 0
   switchSpell: 0
   switchSpellPrev: 0
+  drawPad: 0
+  drawPadPrev: 0
   shield: 0
   shieldPrev: 0
   spawnBoi: 0
@@ -2011,14 +2014,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.5019608}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: d2fafdadbdd10a84396342ab028af1c1, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4

@@ -151,7 +151,7 @@ public class MoveHeinz : MonoBehaviour {
 			inputDir = Vector2.SmoothDamp(inputDir, input.normalized, ref inputSmoothDamp, !controller.isGrounded?turnSmoothTime:turnSmoothTime*1f*((currentSpeed<5?5:currentSpeed)/runSpeed));
 			if (inputDir != Vector2.zero || animator.GetInteger("attack")==2||attackMode) {
 				float targetRotation = Mathf.Atan2 (inputDir.x*(((attackMode&&charInput.inputDir.y<0)?-1:1)), (attackMode)?Mathf.Abs(inputDir.y):inputDir.y) * Mathf.Rad2Deg + cameraT.eulerAngles.y;
-				if(input.magnitude == 0&&controller.isGrounded){
+				if(input.magnitude==0&&controller.isGrounded&&attackMode){
 					targetRotation = cameraT.eulerAngles.y;
 				}
 				transform.eulerAngles = Vector3.up * Mathf.SmoothDampAngle(transform.eulerAngles.y, targetRotation, ref turnSmoothVelocity, controller.isGrounded?turnSmoothTime:turnSmoothTime*1f*((currentSpeed<5?5:currentSpeed)/runSpeed));

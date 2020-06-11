@@ -29,12 +29,16 @@ public class EnemyInput : CharInput
         walking = false;
         switchAttackModePrev = switchAttackMode;
         switchAttackMode = false;
-        vecToPlayer = player.transform.position-transform.position;
-        cameraT.forward = vecToPlayer;
-        if(controllerScript.attackMode){
+        vecToPlayer = playerScript.centerPoint.position-centerPoint.transform.position;
+        if(!!!controllerScript.dead){
+            cameraT.forward = vecToPlayer;
+        }
+        if(controllerScript.attackMode&&!controllerScript.dead){
             if(controllerScript.hit.distance!=0&&hitLayerIsEnemy(controllerScript.hit.collider.gameObject.layer)){
                 leftMouseDown = true;
             }
+            print(thisScript.centerPoint.position);
+            Debug.DrawRay(centerPoint.transform.position, vecToPlayer*10000);
             //Vector3 projectedInputDir = Vector3.ProjectOnPlane(vecToPlayer,Vector3.up);
             if(Vector2Extension.XzPlaneMagnitude(vecToPlayer)>minPlayerRadius+0.5f){
                 inputDir = Vector2.up;

@@ -21,12 +21,12 @@ public class MoveEnemyArms : MonoBehaviour
     {
         Vector3 lOffset;
         Vector3 rOffset;
-        lOffset = xOffset*Vector3.Cross(transform.forward, transform.up).normalized;
-        rOffset = xOffset*Vector3.Cross(transform.up, transform.forward).normalized;
-        lOffset -= transform.up*yOffset;
-        rOffset -= transform.up*yOffset;
-        lOffset += transform.up*zOffset;
-        rOffset += transform.up*zOffset;
+        lOffset = transform.localScale.x*xOffset*Vector3.Cross(transform.forward, transform.up).normalized;
+        rOffset = transform.localScale.x*xOffset*Vector3.Cross(transform.up, transform.forward).normalized;
+        lOffset -= transform.localScale.y*transform.up*yOffset;
+        rOffset -= transform.localScale.y*transform.up*yOffset;
+        lOffset += transform.localScale.z*transform.forward*zOffset;
+        rOffset += transform.localScale.z*transform.forward*zOffset;
         leftArm.transform.position += lOffset;
         rightArm.transform.position += rOffset;
     }

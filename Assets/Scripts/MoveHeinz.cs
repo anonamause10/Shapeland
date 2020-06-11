@@ -65,10 +65,12 @@ public class MoveHeinz : MonoBehaviour {
 	public bool attackMode = false;
 	public bool attackValidPrev;
 	public bool valid;
-	public event Action OnAttackModeSwitch;
-	protected float armturnvel = 1f;
-	protected float armdeg = 0;
-	protected float armprev = 0;
+	public event Action OnDrawPadSwitch;
+	protected float armturnvel = 1f;//dampener for next variable
+	protected float armdeg = 0;//arm rotation on y axis
+	protected float armprev = 0;//previous value of armdeg
+	protected float armturnYvel = 1f;//dampener for next variable
+	protected float armdegY = 0;//arm rotation on x axis
 	protected int armTurnFrameCounter;
 	public RaycastHit hit;
 	public GameObject spell;
@@ -120,6 +122,7 @@ public class MoveHeinz : MonoBehaviour {
 		HandleCooldownTimers();
 		attackingPrev = isAttacking;
 		charInput.CollectInputs();
+		animator.speed = speedMult/Mathf.Pow(Vector2Extension.averageComponentLength(transform.localScale),0.2f);
 		Knockback();
 		if(flying){
 			fly();
@@ -136,18 +139,17 @@ public class MoveHeinz : MonoBehaviour {
 		if(gameObject.tag=="Player"){
 			HandleTimeScale(timeSpeed);
 		}
-		//print(armdeg);
 
 		
 		launchAttack();
 		
-		Debug.DrawRay(transform.position,forceVelVec*100,Color.red);
+		//Debug.DrawRay(transform.position,forceVelVec*100,Color.red);
 	}
 
 	public virtual void move(){
 		//walking
 		speedMult = Mathf.SmoothDamp(speedMult, 1, ref speedMultDamp, 15f);
-		if(knockback==0){
+		if(knockback==0&&!dead){
 			Vector2 input = charInput.inputDir;
 			inputDir = Vector2.SmoothDamp(inputDir, input.normalized, ref inputSmoothDamp, !controller.isGrounded?turnSmoothTime:turnSmoothTime*1f*((currentSpeed<5?5:currentSpeed)/runSpeed));
 			if (inputDir != Vector2.zero || animator.GetInteger("attack")==2||attackMode) {
@@ -165,7 +167,7 @@ public class MoveHeinz : MonoBehaviour {
 		}
 
 		if(controller.isGrounded){
-			moveVec = speedMult*((((attackMode&&!outFly)?(Quaternion.AngleAxis(cameraT.eulerAngles.y, Vector3.up)*new Vector3(inputDir.x,0,inputDir.y)):transform.forward) * currentSpeed))+(transform.up*moveVec.y)+forceVelVec;
+			moveVec = speedMult*((((attackMode&&!outFly)?(Quaternion.AngleAxis(cameraT.eulerAngles.y, Vector3.up)*new Vector3(inputDir.x,0,inputDir.y)):transform.forward) * currentSpeed))+(transform.up*moveVec.y)+forceVelVec/Vector2Extension.averageComponentLength(transform.localScale);
 		}
 		
 		//movement handling
@@ -259,7 +261,7 @@ public class MoveHeinz : MonoBehaviour {
 			spell.GetComponent<Spell>().PreStartStuff();
 		}
 		if(charInput.spawnBoi){
-			Instantiate((GameObject)Resources.Load("Prefabs/Enemies/Enemy"),(hit.distance!=0?hit.point:(cameraT.position+cameraT.forward*100)),Quaternion.identity);
+			Instantiate((GameObject)Resources.Load("Prefabs/Enemies/Bigboi"),(hit.distance!=0?hit.point:(cameraT.position+cameraT.forward*100)),Quaternion.identity);
 		}
 		if(charInput.shield){
 			shielding = true;
@@ -278,10 +280,13 @@ public class MoveHeinz : MonoBehaviour {
 		if(charInput.getDrawPadDown()){
 			timeSpeed = timeSpeed==0?1:0;
 			drawPad = !drawPad;
+			if(OnDrawPadSwitch!=null){
+				OnDrawPadSwitch();
+			}
 		}
 		//attacking
 		valid = attackValid();
-		if(charInput.leftMouseDown&&valid){
+		if((charInput.leftMouseDown&&valid)||drawPad){
 			isAttacking = true;
 			animator.SetInteger("attack",2);
 			attackFrameCounter=-1;
@@ -299,15 +304,20 @@ public class MoveHeinz : MonoBehaviour {
 		if(charInput.getSwitchAttackDown()){
 			attackMode = !attackMode;
 			animator.SetBool("scope", attackMode);
-			if(OnAttackModeSwitch!=null){
-				OnAttackModeSwitch();
+		}
+		if((isAttacking||attackFrameCounter>0||attackMode||shielding)){
+			if(!drawPad){
+				armdegY = Mathf.SmoothDampAngle(armdegY,!flying?(cameraT.eulerAngles.x+(attackMode?-20*(targetSpeed/runSpeed):0)):0, ref armturnYvel, 0.1f);
+				arm.RotateAround(arm.position,transform.right,armdegY);
+			}else{
+				armdegY = 50*(-charInput.mousePosition.y/Screen.height);
+				arm.RotateAround(arm.position,transform.right,armdegY);	
 			}
 		}
-		if((isAttacking||attackFrameCounter>0||attackMode||shielding)&&Time.timeScale>0.95f){
-			arm.RotateAround(arm.position,transform.right,!flying?(cameraT.eulerAngles.x+(attackMode?-20*(targetSpeed/runSpeed):0)):0);
-		}
-		if(attackMode||isAttacking){
-			rotateArm(cameraT.forward, transform.forward);
+		if(drawPad){
+			rotateArm(Camera.main.ScreenToWorldPoint(new Vector3(charInput.mousePosition.x,charInput.mousePosition.y,Camera.main.nearClipPlane))-cameraT.position,transform.forward,false);
+		}else if(attackMode||isAttacking){
+			rotateArm(cameraT.forward, transform.forward,true);
 		}
 		attackValidPrev = valid;
 	}
@@ -373,7 +383,7 @@ public class MoveHeinz : MonoBehaviour {
 		}
 	}
 
-	public virtual void rotateArm(Vector3 forward, Vector3 inputDir){
+	public virtual void rotateArm(Vector3 forward, Vector3 inputDir, bool damp){
 		//   1  0  7
 		//    \ | /
 		//     \|/
@@ -385,11 +395,11 @@ public class MoveHeinz : MonoBehaviour {
 		forward = Vector3.ProjectOnPlane(forward, Vector3.up);	
 		float degree = Vector3.SignedAngle(inputDir, forward, Vector3.up);
 		degree = degree<0?360+degree:degree;
-		if((!(isAttacking||attackFrameCounter>0)||flying)){
+		if((!(isAttacking||attackFrameCounter>0)||flying)&&Time.timeScale>0.95f){
 			degree = 0;
 		}
 		quad = (int)degree/45;
-		armdeg = Mathf.SmoothDampAngle(armdeg, degree, ref armturnvel, 0.1f);
+		armdeg = damp?Mathf.SmoothDampAngle(armdeg, degree, ref armturnvel, 0.1f):degree;
 		armdeg = armdeg<0?armdeg%-360:armdeg%360;
 		if(quad>4&&armdeg>180){
 			armdeg = -(360-armdeg);

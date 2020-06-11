@@ -16,4 +16,8 @@
     public static float XzPlaneMagnitude(Vector3 v){
         return Mathf.Sqrt(v.x*v.x+v.z*v.z);
     }
+
+    public static float averageComponentLength(Vector3 v){
+        return (v.x+v.y+v.z)/3;
+    }
  }

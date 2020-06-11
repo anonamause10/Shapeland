@@ -19,6 +19,8 @@ public class CameraMovement : MonoBehaviour {
 	public float minTurnAngle = -90.0f;
 	public float maxTurnAngle = 0.0f;
 	private float rotX;
+	private float rotY;
+	public bool frozen = false;
 
 	MoveHeinz playerScript;
 	bool flying;
@@ -29,7 +31,7 @@ public class CameraMovement : MonoBehaviour {
 		targetDistanceInitial = targetDistance;
 		GameObject thePlayer = GameObject.Find("paris");
         playerScript = thePlayer.GetComponent<MoveHeinz>();
-		//playerScript.OnAttackModeSwitch += switchAttackMode;
+		playerScript.OnDrawPadSwitch += switchCameraFreeze;
 	}
 	
 	void LateUpdate ()
@@ -45,16 +47,19 @@ public class CameraMovement : MonoBehaviour {
 	void runCam(){
 		flying = playerScript.flying;
 	    // get the mouse inputs
-	    float y = Input.GetAxis("Mouse X") * turnSpeed;
-	    rotX += Input.GetAxis("Mouse Y") * turnSpeed;
+		if(!frozen){
+	    	rotY = Input.GetAxis("Mouse X") * turnSpeed;
+	    	rotX += Input.GetAxis("Mouse Y") * turnSpeed;
+		}
 	
 	    // clamp the vertical rotation
 	    rotX = Mathf.Clamp(rotX, minTurnAngle, maxTurnAngle);
 		targetDistance = Mathf.SmoothDamp (targetDistance, targetDistanceInitial*(playerScript.attackMode?0.7f:1), ref speedSmoothVelocity, 0.1f);
 	
 	    // rotate the camera
-	    transform.eulerAngles = new Vector3(-rotX, transform.eulerAngles.y + y, 0);
-	
+		if(!frozen){
+	    	transform.eulerAngles = new Vector3(-rotX, transform.eulerAngles.y + rotY, 0);
+		}
 	    // move the camera position
 		attackModeOffset = Vector3.SmoothDamp(attackModeOffset, playerScript.attackMode?transform.right:Vector3.zero,ref switchSmoothVelocity,0.1f);
 		transform.position = (target.transform.position)+attackModeOffset - (transform.forward * targetDistance);
@@ -81,11 +86,7 @@ public class CameraMovement : MonoBehaviour {
 		transform.position = (target.transform.position)+attackModeOffset - (transform.forward * targetDistance);
 	}
 	
-	void switchAttackMode(){
-		if(playerScript.attackMode){
-			targetAttackModeOffset = target.transform.right;
-		}else{
-			targetAttackModeOffset = Vector3.zero;
-		}
+	void switchCameraFreeze(){
+		frozen = !frozen;
 	}
 }

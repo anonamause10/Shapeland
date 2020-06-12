@@ -261,7 +261,7 @@ public class MoveHeinz : MonoBehaviour {
 			spell.GetComponent<Spell>().PreStartStuff();
 		}
 		if(charInput.spawnBoi){
-			Instantiate((GameObject)Resources.Load("Prefabs/Enemies/Bigboi"),(hit.distance!=0?hit.point:(cameraT.position+cameraT.forward*100)),Quaternion.identity);
+			Instantiate((GameObject)Resources.Load("Prefabs/Enemies/Enemy"),(hit.distance!=0?hit.point:(cameraT.position+cameraT.forward*100)),Quaternion.identity);
 		}
 		if(charInput.shield){
 			shielding = true;

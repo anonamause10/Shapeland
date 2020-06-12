@@ -393,7 +393,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 0}
   m_FillRect: {fileID: 5568348549214512493}
   m_HandleRect: {fileID: 0}
@@ -913,6 +913,7 @@ MonoBehaviour:
   spellIndex: 0
   timeSinceUse: []
   currShield: {fileID: 0}
+  drawPad: 0
   timeSpeed: 1
   cameraT: {fileID: 0}
   healthBarSlider: {fileID: 3090156785001075813}
@@ -929,6 +930,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inputDir: {x: 0, y: 0}
+  mousePosition: {x: 0, y: 0, z: 0}
   controllerScript: {fileID: 0}
   leftMouseDown: 0
   leftMouseDownPrev: 0

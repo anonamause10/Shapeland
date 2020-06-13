@@ -23,6 +23,8 @@ public class CharInput : MonoBehaviour
     public bool shieldPrev = false;
     public bool spawnBoi;
     public int knockback;
+    public float mouseX;
+    public float mouseY;
     public Transform cameraT;
 
     public virtual void Start(){
@@ -49,6 +51,8 @@ public class CharInput : MonoBehaviour
         walking = Input.GetKey (KeyCode.LeftShift);
         spawnBoi = Input.GetKeyDown(KeyCode.T);
         mousePosition = Input.mousePosition;
+        mouseX = Input.GetAxis("Mouse X"); 
+        mouseY = Input.GetAxis("Mouse Y");
     }
 
     public bool getJumpDown(){

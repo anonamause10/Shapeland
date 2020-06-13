@@ -19,7 +19,7 @@ public class MoveEnemy : MoveHeinz
         healthBarSlider.value = Mathf.SmoothDamp(healthBarSlider.value, health/totalHealth, ref healthBarDamp, 0.1f);
         if(poisoned){
             if(dpsTime>0){
-                health-=dps;
+                health-=dps*Time.deltaTime;
                 dpsTime-=Time.deltaTime;
             }else{
                 poisoned = false;

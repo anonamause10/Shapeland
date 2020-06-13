@@ -75,6 +75,7 @@ public class MoveHeinz : MonoBehaviour {
 	public RaycastHit hit;
 	public GameObject spell;
 	public GameObject currSpell;
+	public GameObject drawPadObj;
 	public int spellIndex;
 	protected String[] spells;
 	public float[] timeSinceUse;
@@ -263,7 +264,7 @@ public class MoveHeinz : MonoBehaviour {
 		if(charInput.spawnBoi){
 			Instantiate((GameObject)Resources.Load("Prefabs/Enemies/Enemy"),(hit.distance!=0?hit.point:(cameraT.position+cameraT.forward*100)),Quaternion.identity);
 		}
-		if(charInput.shield){
+		if(charInput.shield&&!drawPad){
 			shielding = true;
 			if(currShield==null){
 				currShield = Instantiate(shield,wandTip.transform.position,Quaternion.identity);
@@ -283,10 +284,17 @@ public class MoveHeinz : MonoBehaviour {
 			if(OnDrawPadSwitch!=null){
 				OnDrawPadSwitch();
 			}
+			if(drawPad){
+				drawPadObj = Instantiate((GameObject)Resources.Load("Prefabs/DrawSpellCaster"),transform.position+3*transform.up, Quaternion.LookRotation(cameraT.forward));	
+			}else{
+				if(drawPadObj!=null){
+					drawPadObj.GetComponent<DrawSpellCaster>().kill();
+				}
+			}
 		}
 		//attacking
 		valid = attackValid();
-		if((charInput.leftMouseDown&&valid)||drawPad){
+		if((charInput.leftMouseDown&&valid)){
 			isAttacking = true;
 			animator.SetInteger("attack",2);
 			attackFrameCounter=-1;
@@ -447,14 +455,14 @@ public class MoveHeinz : MonoBehaviour {
 
 	public virtual void HandleTimeScale(float timeScale){
 
-		Time.timeScale = Mathf.SmoothDamp(Time.timeScale,timeScale,ref timeSpeedDamp,0.01f);//Mathf.Lerp(Time.timeScale,timeScale,50*Time.deltaTime);
+		Time.timeScale = Mathf.SmoothDamp(Time.timeScale,timeScale,ref timeSpeedDamp,0.005f);//Mathf.Lerp(Time.timeScale,timeScale,50*Time.deltaTime);
 
 	}
 
 	public virtual void HandleDamage(){
 		if(poisoned){
             if(dpsTime>0){
-                health-=dps;
+                health-=dps*Time.deltaTime;
                 dpsTime-=Time.deltaTime;
             }else{
                 poisoned = false;
@@ -467,7 +475,7 @@ public class MoveHeinz : MonoBehaviour {
 	}
 
 	public virtual void poison(float amount,float time){
-        dps = 0.04f*Mathf.Atan(200*(amount+dps));
+        dps = (0.04f*Mathf.Atan(200*(amount+dps)))/Time.deltaTime;
         dpsTime = 2.5f*Mathf.Atan(2000*(dpsTime+time));
         poisoned = true;
     }

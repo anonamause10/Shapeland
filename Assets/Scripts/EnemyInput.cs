@@ -37,7 +37,6 @@ public class EnemyInput : CharInput
             if(controllerScript.hit.distance!=0&&hitLayerIsEnemy(controllerScript.hit.collider.gameObject.layer)){
                 leftMouseDown = true;
             }
-            print(thisScript.centerPoint.position);
             Debug.DrawRay(centerPoint.transform.position, vecToPlayer*10000);
             //Vector3 projectedInputDir = Vector3.ProjectOnPlane(vecToPlayer,Vector3.up);
             if(Vector2Extension.XzPlaneMagnitude(vecToPlayer)>minPlayerRadius+0.5f){

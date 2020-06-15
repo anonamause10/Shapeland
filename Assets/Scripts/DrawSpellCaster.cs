@@ -41,7 +41,7 @@ public class DrawSpellCaster : MonoBehaviour
 
     void aliveUpdate(){
         timeMult = Mathf.Atan(bonkTimer);
-        cursor.localScale = 0.05f*timeMult*Vector3.one;
+        cursor.localScale = 0.1f*timeMult*Vector3.one;
         planeRend.material.color = new Color(0,0,0,timeMult/Mathf.PI);
 
 
@@ -61,7 +61,7 @@ public class DrawSpellCaster : MonoBehaviour
     void deadUpdate(){
         clearArray(array);
         timeMult = Mathf.Atan(bonkTimer);
-        cursor.localScale = 0.05f*timeMult*Vector3.one;
+        cursor.localScale = 0.1f*timeMult*Vector3.one;
         planeRend.material.color = new Color(0,0,0,timeMult/Mathf.PI);
 
         trail.material.SetFloat("_Density",(Mathf.PI/2)-timeMult);

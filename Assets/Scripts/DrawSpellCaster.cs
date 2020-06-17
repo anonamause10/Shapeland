@@ -72,9 +72,9 @@ public class DrawSpellCaster : MonoBehaviour
         int xArr = Mathf.Clamp((int)Mathf.Round(((cursor.localPosition.x +0.8f)/1.6f)*28),0,27);
         int yArr = Mathf.Clamp((int)Mathf.Round(((cursor.localPosition.y +0.8f)/1.6f)*28),0,27);
         currPoint.Set(xArr,yArr);
-        print(currPoint);
+        //print(currPoint);
         if(trail.emitting){
-            array[(int)currPoint.x,(int)currPoint.y] = 1;
+            array[(int)currPoint.x,(int)currPoint.y] = 0.99f;
         }
 
         
@@ -130,7 +130,7 @@ public class DrawSpellCaster : MonoBehaviour
         }
         int numerator = longest >> 1 ;
         for (int i=0;i<=longest;i++) {
-            array[x,y] = 1;
+            array[x,y] = 0.99f;
             numerator += shortest ;
             if (!(numerator<longest)) {
                 numerator -= longest ;
@@ -148,7 +148,25 @@ public class DrawSpellCaster : MonoBehaviour
         bonkTimer = 5;
         trail.emitting = false;
         var model = ModelLoader.Load(modelSource);
-        var worker = BarracudaWorkerFactory.CreateWorker(BarracudaWorkerFactory.Type.ComputePrecompiled, model);
+        var worker = WorkerFactory.CreateWorker(WorkerFactory.Type.ComputePrecompiled, model);
+        Tensor input = new Tensor(0,1,28,28);
+        for (int i = 0; i < array.GetLength(0); i++)
+        {
+            for (int j = 0; j < array.GetLength(1); j++)
+            {
+                input[0,0,i,j] = array[i,array.GetLength(1)-j-1];
+            }
+        }
+        worker.Execute(input);
+        Tensor output = worker.PeekOutput();
+        string str = "";
+        for(int i = 0; i<7; i++){
+            str+= output[0,0,0,i] + ", ";    
+        }
+        print(str);
+        input.Dispose();
+        output.Dispose();
+        worker.Dispose();
 
     }
 

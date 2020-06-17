@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using Barracuda;
+using Unity.Barracuda;
 using UnityEngine;
 
 public class DrawSpellCaster : MonoBehaviour
@@ -147,6 +147,9 @@ public class DrawSpellCaster : MonoBehaviour
         dead = true;
         bonkTimer = 5;
         trail.emitting = false;
+        var model = ModelLoader.Load(modelSource);
+        var worker = BarracudaWorkerFactory.CreateWorker(BarracudaWorkerFactory.Type.ComputePrecompiled, model);
+
     }
 
     public float[,] clearArray(float[,] arr){

@@ -131,6 +131,8 @@ MonoBehaviour:
   trail: {fileID: 0}
   sensitivity: 0.05
   bonkTimer: 0
+  modelSource: {fileID: 5022602860645237092, guid: f1efa3fe34febee489ca809e9cb89464,
+    type: 3}
 --- !u!33 &7123793064627341513
 MeshFilter:
   m_ObjectHideFlags: 0

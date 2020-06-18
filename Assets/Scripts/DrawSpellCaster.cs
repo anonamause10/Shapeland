@@ -10,11 +10,12 @@ public class DrawSpellCaster : MonoBehaviour
     public Transform cursor;
     public TrailRenderer trail;
     public float sensitivity = 1f;
+    public int origRes = 100;
     public float bonkTimer;
     private float timeMult;
     private Renderer planeRend;
     private bool dead = false;
-    private float[,] array;
+    private DrawDataHolder dataHolder;
     private Texture2D display; 
     private Vector2 prevPoint;
     private bool prevPress;
@@ -23,8 +24,8 @@ public class DrawSpellCaster : MonoBehaviour
     
     void Start()
     {
-        array = new float[28,28];
-        display = new Texture2D(array.GetLength(1),array.GetLength(0));
+        dataHolder = new DrawDataHolder(origRes);
+        display = dataHolder.texture;
         playerScript = GameObject.Find("paris").GetComponent<MoveHeinz>();
         transform.position = playerScript.cameraT.position+2*playerScript.cameraT.forward;
         cursor = transform.Find("Cursor");
@@ -33,9 +34,10 @@ public class DrawSpellCaster : MonoBehaviour
         planeRend = GetComponent<Renderer>();
         planeRend.material.color = new Color(0,0,0,0);
 
-        int xArr = Mathf.Clamp((int)Mathf.Round(((cursor.localPosition.x +0.8f)/1.6f)*28),0,27);
-        int yArr = Mathf.Clamp((int)Mathf.Round(((cursor.localPosition.y +0.8f)/1.6f)*28),0,27);
+        int xArr = Mathf.Clamp((int)Mathf.Round(((cursor.localPosition.x +0.8f)/1.6f)*origRes),0,origRes-1);
+        int yArr = Mathf.Clamp((int)Mathf.Round(((cursor.localPosition.y +0.8f)/1.6f)*origRes),0,origRes-1);
         currPoint = new Vector2(xArr,yArr);
+
     }
 
     // Update is called once per frame
@@ -69,12 +71,12 @@ public class DrawSpellCaster : MonoBehaviour
         cursor.Translate(sensitivity*cursorMove);
 
 
-        int xArr = Mathf.Clamp((int)Mathf.Round(((cursor.localPosition.x +0.8f)/1.6f)*28),0,27);
-        int yArr = Mathf.Clamp((int)Mathf.Round(((cursor.localPosition.y +0.8f)/1.6f)*28),0,27);
+        int xArr = Mathf.Clamp((int)Mathf.Round(((cursor.localPosition.x +0.8f)/1.6f)*origRes),0,origRes-1);
+        int yArr = Mathf.Clamp((int)Mathf.Round(((cursor.localPosition.y +0.8f)/1.6f)*origRes),0,origRes-1);
         currPoint.Set(xArr,yArr);
         //print(currPoint);
         if(trail.emitting){
-            array[(int)currPoint.x,(int)currPoint.y] = 0.99f;
+            dataHolder.SetPoint(xArr,yArr,1);
         }
 
         
@@ -130,7 +132,7 @@ public class DrawSpellCaster : MonoBehaviour
         }
         int numerator = longest >> 1 ;
         for (int i=0;i<=longest;i++) {
-            array[x,y] = 0.99f;
+            dataHolder.SetPoint(x,y,1);
             numerator += shortest ;
             if (!(numerator<longest)) {
                 numerator -= longest ;
@@ -150,11 +152,14 @@ public class DrawSpellCaster : MonoBehaviour
         var model = ModelLoader.Load(modelSource);
         var worker = WorkerFactory.CreateWorker(WorkerFactory.Type.ComputePrecompiled, model);
         Tensor input = new Tensor(0,1,28,28);
-        for (int i = 0; i < array.GetLength(0); i++)
+        Texture2D newTex = dataHolder.resizedTexture(28);
+        newTex.Apply();
+        display = newTex;
+        for (int i = 0; i < 28; i++)
         {
-            for (int j = 0; j < array.GetLength(1); j++)
+            for (int j = 0; j < 28; j++)
             {
-                input[0,0,i,j] = array[i,array.GetLength(1)-j-1];
+                input[0,0,i,j] = newTex.GetPixel(i,28-j-1).grayscale;
             }
         }
         worker.Execute(input);
@@ -170,29 +175,8 @@ public class DrawSpellCaster : MonoBehaviour
 
     }
 
-    public float[,] clearArray(float[,] arr){
-        float[,] temp = arr;
-        for (int i = 0; i < arr.GetLength(0); i++)
-        {
-            for (int j = 0; j < arr.GetLength(1); j++)
-            {
-                temp[i,j] = 0;
-            }
-        }
-        return temp;
-    }
-
     void OnGUI(){
-        for (int i = 0; i < 28; i++)
-        {
-            for (int j = 0; j < 28; j++)
-            {
-                Color col = array[i,j]*Color.white;
-                col.a = 1;
-                display.SetPixel(i,j,col);
-            }
-        }
         display.Apply();
-        GUI.DrawTexture(new Rect(10,10,28,28),display);
+        GUI.DrawTexture(new Rect(10,10,100,100),display);
     }
 }

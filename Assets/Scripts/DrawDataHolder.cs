@@ -37,7 +37,7 @@ public class DrawDataHolder
 
     
 
-    public Texture2D resizedTexture(int targetSize){
+    public Texture2D resizedTexture(int targetSize, int pad){
         if(bounds == new Vector4(size-1,0,size-1,0)){
             return new Texture2D(targetSize, targetSize);
         }

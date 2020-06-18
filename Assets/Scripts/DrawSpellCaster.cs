@@ -152,7 +152,7 @@ public class DrawSpellCaster : MonoBehaviour
         var model = ModelLoader.Load(modelSource);
         var worker = WorkerFactory.CreateWorker(WorkerFactory.Type.ComputePrecompiled, model);
         Tensor input = new Tensor(0,1,28,28);
-        Texture2D newTex = dataHolder.resizedTexture(28);
+        Texture2D newTex = dataHolder.resizedTexture(28,2);
         newTex.Apply();
         display = newTex;
         for (int i = 0; i < 28; i++)

@@ -130,6 +130,7 @@ MonoBehaviour:
   cursor: {fileID: 0}
   trail: {fileID: 0}
   sensitivity: 0.05
+  origRes: 56
   bonkTimer: 0
   modelSource: {fileID: 5022602860645237092, guid: f1efa3fe34febee489ca809e9cb89464,
     type: 3}

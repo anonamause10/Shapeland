@@ -4710,7 +4710,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 2100000, guid: 6421a5a06ae9f7a47a57b67f35c73b5a, type: 2}
   - {fileID: 2100000, guid: 594b84f654d445548a9fe3822a6f5402, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -4768,6 +4768,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 0}
+  elapsedTime: 0
+  coolDownTime: 0
   going: 1
   buff: 0
   damage: 0

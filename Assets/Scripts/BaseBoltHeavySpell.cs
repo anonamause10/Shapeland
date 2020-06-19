@@ -21,7 +21,7 @@ public class BaseBoltHeavySpell : Spell
     }
 
     public override void PreStartStuff(){
-        coolDownTime = 1.5f;
+        coolDownTime = 0f;
     }
 
     public override void LateUpdate()

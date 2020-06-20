@@ -26,13 +26,16 @@ public class DrawDataHolder
     public void SetPoint(int x, int y, float val){
         Color col = val*Color.white; col.a = 1;
         texture.SetPixel(x,y,col);
+        if(x+1<size) texture.SetPixel(x+1,y,col);
+        if(y+1<size) texture.SetPixel(x,y+1,col);
+        if(x+1<size&&y+1<size) texture.SetPixel(x+1,y+1,col);
         texture.Apply();
         numPoints++;
 
         if(x<bounds.x) bounds.x = x;
-        if(x>bounds.y) bounds.y = x;
+        if((x+1<size?x+1:x)>bounds.y) bounds.y = x+1<size?x+1:x;
         if(y<bounds.z) bounds.z = y;
-        if(y>bounds.w) bounds.w = y;
+        if((y+1<size?y+1:y)>bounds.w) bounds.w = y+1<size?y+1:y;
     }
 
     
@@ -55,8 +58,12 @@ public class DrawDataHolder
         for (int i = 0; i < targetSize; i++)
         {
             for (int j = 0; j < targetSize; j++)
-            {
-                result.SetPixel(i,j,temp.GetPixelBilinear(((float)i)/(targetSize-1),((float)j)/(targetSize-1)));
+            {   
+                if(i<pad||i>targetSize-pad-1||j<pad||j>targetSize-pad-1){
+                    result.SetPixel(i,j,Color.black);
+                }else{
+                    result.SetPixel(i,j,temp.GetPixelBilinear(((float)i-pad)/(targetSize-1-pad),((float)j-pad)/(targetSize-1-pad)));
+                }
             }
         }
         result.Apply();

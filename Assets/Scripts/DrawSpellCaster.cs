@@ -151,7 +151,7 @@ public class DrawSpellCaster : MonoBehaviour
         trail.emitting = false;
         var model = ModelLoader.Load(modelSource);
         var worker = WorkerFactory.CreateWorker(WorkerFactory.Type.ComputePrecompiled, model);
-        Tensor input = new Tensor(0,1,28,28);
+        Tensor input = new Tensor(0,28,28,1);
         Texture2D newTex = dataHolder.resizedTexture(28,2);
         newTex.Apply();
         display = newTex;
@@ -159,7 +159,7 @@ public class DrawSpellCaster : MonoBehaviour
         {
             for (int j = 0; j < 28; j++)
             {
-                input[0,0,i,j] = newTex.GetPixel(i,28-j-1).grayscale;
+                input[0,i,j,0] = newTex.GetPixel(i,28-j-1).grayscale;
             }
         }
         worker.Execute(input);

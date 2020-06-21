@@ -7,6 +7,8 @@ TagManager:
   - Enemy
   - Spell
   - Shield
+  - Terrain
+  - Effect
   layers:
   - Default
   - TransparentFX
@@ -22,8 +24,8 @@ TagManager:
   - Playershield
   - Enemyshield
   - Soloshield
-  - 
-  - 
+  - Terrain
+  - Effect
   - 
   - 
   - 

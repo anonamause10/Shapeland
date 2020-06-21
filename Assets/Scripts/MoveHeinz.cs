@@ -102,7 +102,7 @@ public class MoveHeinz : MonoBehaviour {
 		forearm = arm.Find("Bone.008");
 		hand = forearm.Find("Bone.009");
 		cameraT = charInput.cameraT;
-		spells = new String[]{"DeathSpell","BaseBoltSpell","BaseBoltHeavySpell","FireBoltCharge","FreezeSpell"};
+		spells = new String[]{"FlameSpell", "DeathSpell","BaseBoltSpell","BaseBoltHeavySpell","FireBoltCharge","FreezeSpell"};
 		timeSinceUse = new float[spells.Length];
 		for (int i = 0; i < timeSinceUse.Length; i++)
 		{

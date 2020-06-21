@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Respawn
-  m_Shader: {fileID: -6465566751694194690, guid: 6e98e11202c522a45878160e35f0251b,
+  m_Name: RespawnHoriz
+  m_Shader: {fileID: -6465566751694194690, guid: 54d94930a54fb3845959af9661a7f340,
     type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4

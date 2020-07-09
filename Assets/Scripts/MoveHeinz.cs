@@ -76,6 +76,7 @@ public class MoveHeinz : MonoBehaviour {
 	public GameObject spell;
 	public GameObject currSpell;
 	public GameObject drawPadObj;
+	private Vector3 drawMouseTracker;
 	public int spellIndex;
 	protected String[] spells;
 	public float[] timeSinceUse;
@@ -114,6 +115,7 @@ public class MoveHeinz : MonoBehaviour {
 		health = totalHealth;
 		
 		layermasknum = ~((1<<(gameObject.layer))|(1<<(gameObject.layer+3)));
+		Cursor.lockState = CursorLockMode.Locked;
 		//animator.speed = 0.5f;
 	}
 
@@ -285,7 +287,8 @@ public class MoveHeinz : MonoBehaviour {
 				OnDrawPadSwitch();
 			}
 			if(drawPad){
-				drawPadObj = Instantiate((GameObject)Resources.Load("Prefabs/DrawSpellCaster"),transform.position+3*transform.up, Quaternion.LookRotation(cameraT.forward));	
+				drawPadObj = Instantiate((GameObject)Resources.Load("Prefabs/DrawSpellCaster"),transform.position+3*transform.up, Quaternion.LookRotation(cameraT.forward));
+				drawMouseTracker = new Vector3(Screen.width/2,Screen.height/2,Camera.main.nearClipPlane);
 			}else{
 				if(drawPadObj!=null){
 					drawPadObj.GetComponent<DrawSpellCaster>().kill();
@@ -318,12 +321,13 @@ public class MoveHeinz : MonoBehaviour {
 				armdegY = Mathf.SmoothDampAngle(armdegY,!flying?(cameraT.eulerAngles.x+(attackMode?-20*(targetSpeed/runSpeed):0)):0, ref armturnYvel, 0.1f);
 				arm.RotateAround(arm.position,transform.right,armdegY);
 			}else{
-				armdegY = 50*(-charInput.mousePosition.y/Screen.height);
+				armdegY += (-charInput.mouseY);
 				arm.RotateAround(arm.position,transform.right,armdegY);	
 			}
 		}
 		if(drawPad){
-			rotateArm(Camera.main.ScreenToWorldPoint(new Vector3(charInput.mousePosition.x,charInput.mousePosition.y,Camera.main.nearClipPlane))-cameraT.position,transform.forward,false);
+			drawMouseTracker.x += 20*charInput.mouseX;
+			rotateArm(Camera.main.ScreenToWorldPoint(new Vector3(drawMouseTracker.x,charInput.mousePosition.y,Camera.main.nearClipPlane))-cameraT.position,transform.forward,false);
 		}else if(attackMode||isAttacking){
 			rotateArm(cameraT.forward, transform.forward,true);
 		}
